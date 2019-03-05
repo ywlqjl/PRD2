@@ -1,0 +1,10 @@
+inuit01.png|./images/inuit01.png
+inuit02.png|./images/inuit02.png
+inuit03.png|./images/inuit03.png
+inuit04.png|./images/inuit04.png
+inuit05.png|./images/inuit05.png
+inuit06.png|./images/inuit06.png
+inuit07.png|./images/inuit07.png
+inuit08.png|./images/inuit08.png
+inuit09.png|./images/inuit09.png
+inuit10.png|./images/inuit10.png
