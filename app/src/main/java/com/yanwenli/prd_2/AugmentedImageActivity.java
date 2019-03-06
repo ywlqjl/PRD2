@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.ar.core.AugmentedImage;
@@ -25,19 +27,34 @@ public class AugmentedImageActivity extends AppCompatActivity {
     private final Map<AugmentedImage, AugmentedImageNode> augmentedImageMap = new HashMap<>();
     private ImageView fitToScanView;
     private LinearLayout introduction_layout;
-    private ArrayList<String> listInfoPages = new ArrayList<>();
+    private GridLayout introduction_layout2;
+    private TextView txtInfo;
+    private TextView txtTitle;
+    private TextView txtArtist;
+    private TextView txtDate;
+    private TextView txtMedium;
+    private ArrayList<Inuit> listInfoPages = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_augmented_image);
+        setContentView(R.layout.activity_augmented_image2);
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdateFrame);
-        fitToScanView = findViewById(R.id.image_view_fit_to_scan);
+        fitToScanView = findViewById(R.id.image_view_fit_to_scan2);
         fitToScanView.setVisibility(View.VISIBLE);
-        introduction_layout = findViewById(R.id.image_intro_layout);
+        introduction_layout = findViewById(R.id.image_intro_layout2);
         introduction_layout.setVisibility(View.GONE);
+
+//        txtInfo = findViewById(R.id.txt_info_image);
+        txtTitle = findViewById(R.id.txt_title_image);
+        txtArtist = findViewById(R.id.txt_artist_image);
+        txtDate = findViewById(R.id.txt_date_image);
+        txtMedium = findViewById(R.id.txt_medium_image);
+
+        LoadInuitInfo loadInuitInfo = new LoadInuitInfo();
+        listInfoPages = loadInuitInfo.createListInuitInfo();
     }
 
     private void onUpdateFrame(FrameTime frameTime) {
@@ -55,7 +72,14 @@ public class AugmentedImageActivity extends AppCompatActivity {
                 case PAUSED:
                     // When an image is in PAUSED state, but the camera is not PAUSED, it has been detected,
                     // but not yet tracked.
-                    String text = "Detected Image" + augmentedImage.getIndex();
+                    int index_of_current_image = augmentedImage.getIndex();
+                    String text = "Detected Image" + index_of_current_image;
+//                    txtInfo.setText(listInfoPages.get(index_of_current_image).getInfo());
+                    txtTitle.setText(listInfoPages.get(index_of_current_image).getTitle());
+                    txtArtist.setText(listInfoPages.get(index_of_current_image).getArtist());
+                    txtDate.setText(listInfoPages.get(index_of_current_image).getDate());
+                    txtMedium.setText(listInfoPages.get(index_of_current_image).getMedium());
+
                     Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 
                     break;
@@ -76,9 +100,10 @@ public class AugmentedImageActivity extends AppCompatActivity {
                             augmentedImageMap.get(augmentedImage).setOnTapListener((hitTestResult, motionEvent) -> {
 //                                Intent intent = new Intent(AugmentedImageActivity.this, InfoActivity.class);
 //                                intent.putExtra("imageIndex", augmentedImage.getIndex());
-//
 //                                startActivity(intent);
+
                                 Toast.makeText(AugmentedImageActivity.this, "Ok: Information page", Toast.LENGTH_SHORT).show();
+
                             });
                         }
 
