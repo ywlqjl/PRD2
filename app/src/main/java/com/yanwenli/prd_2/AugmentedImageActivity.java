@@ -1,9 +1,14 @@
 package com.yanwenli.prd_2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -14,6 +19,9 @@ import com.google.ar.core.AugmentedImage;
 import com.google.ar.core.Frame;
 import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.FrameTime;
+import com.google.ar.sceneform.rendering.Color;
+import com.google.ar.sceneform.rendering.ExternalTexture;
+import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 
 import java.util.ArrayList;
@@ -33,7 +41,17 @@ public class AugmentedImageActivity extends AppCompatActivity {
     private TextView txtArtist;
     private TextView txtDate;
     private TextView txtMedium;
+    private Button btnMoreInfo;
     private ArrayList<Inuit> listInfoPages = new ArrayList<>();
+
+    @Nullable
+    private ModelRenderable videoRenderable;
+    private MediaPlayer mediaPlayer;
+    // The color to filter out of the video.
+    private static final Color CHROMA_KEY_COLOR = new Color(0.1843f, 1.0f, 0.098f);
+
+    // Controls the height of the video in world space.
+    private static final float VIDEO_HEIGHT_METERS = 0.85f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +71,19 @@ public class AugmentedImageActivity extends AppCompatActivity {
         txtDate = findViewById(R.id.txt_date_image);
         txtMedium = findViewById(R.id.txt_medium_image);
 
+        btnMoreInfo = findViewById(R.id.btn_more_info);
+
         LoadInuitInfo loadInuitInfo = new LoadInuitInfo();
         listInfoPages = loadInuitInfo.createListInuitInfo();
+
+        btnMoreInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AugmentedImageActivity.this, MoreInfoActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void onUpdateFrame(FrameTime frameTime) {
@@ -115,5 +144,36 @@ public class AugmentedImageActivity extends AppCompatActivity {
                     break;
             }
         }
+    }
+
+    public void playVideo(Context context) {
+        // Create an ExternalTexture for displaying the contents of the video.
+        ExternalTexture texture = new ExternalTexture();
+
+        // Create an Android MediaPlayer to capture the video on the external texture's surface.
+        mediaPlayer = MediaPlayer.create(this, R.raw.lion_chroma);
+        mediaPlayer.setSurface(texture.getSurface());
+        mediaPlayer.setLooping(true);
+
+        // Create a renderable with a material that has a parameter of type 'samplerExternal' so that
+        // it can display an ExternalTexture. The material also has an implementation of a chroma key
+        // filter.
+        ModelRenderable.builder()
+                .setSource(this, R.raw.chroma_key_video)
+                .build()
+                .thenAccept(
+                        renderable -> {
+                            videoRenderable = renderable;
+                            renderable.getMaterial().setExternalTexture("videoTexture", texture);
+                            renderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
+                        })
+                .exceptionally(
+                        throwable -> {
+                            Toast toast =
+                                    Toast.makeText(this, "Unable to load video renderable", Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.show();
+                            return null;
+                        });
     }
 }

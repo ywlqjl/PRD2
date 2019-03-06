@@ -3,7 +3,7 @@
     package="com.yanwenli.prd_2">
 
     <uses-permission android:name="android.permission.CAMERA" />
-
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- <use-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> -->
     <uses-feature
         android:name="android.hardware.camera.ar"
         android:required="true" />
@@ -15,8 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".AugmentedImageActivity"></activity>
+        <activity android:name=".MoreInfoActivity"></activity>
+        <activity android:name=".VideoPlay" />
+        <activity android:name=".AugmentedImageActivity" />
         <activity
             android:name=".Welcome"
             android:configChanges="orientation|keyboardHidden|screenSize"
