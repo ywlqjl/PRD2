@@ -23,6 +23,7 @@ import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Node;
+import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.ExternalTexture;
@@ -197,9 +198,13 @@ public class AugmentedImageActivity extends AppCompatActivity {
         // Set the scale of the node so that the aspect ratio of the video is correct.
         float videoWidth = mediaPlayer.getVideoWidth();
         float videoHeight = mediaPlayer.getVideoHeight();
-        videoNode.setLocalScale(
-                new Vector3(
-                        VIDEO_HEIGHT_METERS * (videoWidth / videoHeight), VIDEO_HEIGHT_METERS, 1.0f));
+        Vector3 local_vector3 = new  Vector3(
+                (float) (0.5 * VIDEO_HEIGHT_METERS * (videoWidth / videoHeight)),
+                (float) (0.5 *VIDEO_HEIGHT_METERS), 0.5f);
+        videoNode.setLocalScale(local_vector3);
+
+        Quaternion quaternion = new Quaternion(local_vector3, 0);
+        videoNode.setWorldRotation(quaternion);
 
         // Start playing the video when the first node is placed.
         if (!mediaPlayer.isPlaying()) {
