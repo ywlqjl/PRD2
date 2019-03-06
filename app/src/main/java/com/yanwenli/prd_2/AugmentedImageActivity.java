@@ -2,6 +2,7 @@ package com.yanwenli.prd_2;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -15,10 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.ar.core.Anchor;
 import com.google.ar.core.AugmentedImage;
 import com.google.ar.core.Frame;
 import com.google.ar.core.TrackingState;
+import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
+import com.google.ar.sceneform.Node;
+import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.ExternalTexture;
 import com.google.ar.sceneform.rendering.ModelRenderable;
@@ -117,6 +122,9 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
                     // Create a new anchor for newly found images.
                     if (!augmentedImageMap.containsKey(augmentedImage)) {
+
+                        augmentedImageMap.clear();
+
                         AugmentedImageNode node = new AugmentedImageNode(this);
                         node.setImage(augmentedImage);
                         augmentedImageMap.put(augmentedImage, node);
@@ -131,6 +139,8 @@ public class AugmentedImageActivity extends AppCompatActivity {
 //                                intent.putExtra("imageIndex", augmentedImage.getIndex());
 //                                startActivity(intent);
 
+                                playVideo(this,augmentedImageMap.get(augmentedImage).getAnchor());
+//                                playVideo(this,augmentedImageMap.get(augmentedImage).getAnchorParent());
                                 Toast.makeText(AugmentedImageActivity.this, "Ok: Information page", Toast.LENGTH_SHORT).show();
 
                             });
@@ -146,12 +156,12 @@ public class AugmentedImageActivity extends AppCompatActivity {
         }
     }
 
-    public void playVideo(Context context) {
+    public void playVideo(Context context, Anchor anchorParent ) {
         // Create an ExternalTexture for displaying the contents of the video.
         ExternalTexture texture = new ExternalTexture();
 
         // Create an Android MediaPlayer to capture the video on the external texture's surface.
-        mediaPlayer = MediaPlayer.create(this, R.raw.lion_chroma);
+        mediaPlayer = MediaPlayer.create(context, R.raw.lion_chroma);
         mediaPlayer.setSurface(texture.getSurface());
         mediaPlayer.setLooping(true);
 
@@ -175,5 +185,38 @@ public class AugmentedImageActivity extends AppCompatActivity {
                             toast.show();
                             return null;
                         });
+
+
+//        Anchor anchor = anchorParent.createAnchor();
+        AnchorNode anchorNode = new AnchorNode(anchorParent);
+        anchorNode.setParent(arFragment.getArSceneView().getScene());
+
+        Node videoNode = new Node();
+        videoNode.setParent(anchorNode);
+
+        // Set the scale of the node so that the aspect ratio of the video is correct.
+        float videoWidth = mediaPlayer.getVideoWidth();
+        float videoHeight = mediaPlayer.getVideoHeight();
+        videoNode.setLocalScale(
+                new Vector3(
+                        VIDEO_HEIGHT_METERS * (videoWidth / videoHeight), VIDEO_HEIGHT_METERS, 1.0f));
+
+        // Start playing the video when the first node is placed.
+        if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+
+            // Wait to set the renderable until the first frame of the  video becomes available.
+            // This prevents the renderable from briefly appearing as a black quad before the video
+            // plays.
+            texture
+                    .getSurfaceTexture()
+                    .setOnFrameAvailableListener(
+                            (SurfaceTexture surfaceTexture) -> {
+                                videoNode.setRenderable(videoRenderable);
+                                texture.getSurfaceTexture().setOnFrameAvailableListener(null);
+                            });
+        } else {
+            videoNode.setRenderable(videoRenderable);
+        }
     }
 }
