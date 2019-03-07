@@ -71,7 +71,7 @@ public class LoadInuitInfo {
                     "Médium :Estampe, gravure sur pierre, papier Kozo\n"));
         }
     */
-    public ArrayList<Inuit> createListInuitInfo(){
+    public ArrayList<Inuit> createListInuitInfo() {
         listInuitsInfo.add(new Inuit(0, "L'homme prépare le poisson et la femme assouplit les kamiks\n",
                 "QUMALUK, Levi\n",
                 "1986\n",
@@ -98,8 +98,8 @@ public class LoadInuitInfo {
                 "Estampe, gravure sur pierre, papier Kozo\n"));
 
         listInuitsInfo.add(new Inuit(5, "Rassemblement d'oiseaux dans l'Arctique\n",
-                "PAPIALUK, Josie P\n" ,
-                "1983\n" ,
+                "PAPIALUK, Josie P\n",
+                "1983\n",
                 "Estampe, gravure sur pierre, papier Kozo\n"));
 
         listInuitsInfo.add(new Inuit(6, "À la recherche d'un chasseur perdu sur les glaces\n",

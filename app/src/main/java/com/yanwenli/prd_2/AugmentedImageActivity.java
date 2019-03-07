@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -140,7 +140,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
 //                                intent.putExtra("imageIndex", augmentedImage.getIndex());
 //                                startActivity(intent);
 
-                                playVideo(this,augmentedImageMap.get(augmentedImage).getAnchor());
+                                playVideo(this, augmentedImageMap.get(augmentedImage).getAnchor());
 //                                playVideo(this,augmentedImageMap.get(augmentedImage).getAnchorParent());
                                 Toast.makeText(AugmentedImageActivity.this, "Ok: Information page", Toast.LENGTH_SHORT).show();
 
@@ -157,7 +157,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
         }
     }
 
-    public void playVideo(Context context, Anchor anchorParent ) {
+    public void playVideo(Context context, Anchor anchorParent) {
         // Create an ExternalTexture for displaying the contents of the video.
         ExternalTexture texture = new ExternalTexture();
 
@@ -198,9 +198,9 @@ public class AugmentedImageActivity extends AppCompatActivity {
         // Set the scale of the node so that the aspect ratio of the video is correct.
         float videoWidth = mediaPlayer.getVideoWidth();
         float videoHeight = mediaPlayer.getVideoHeight();
-        Vector3 local_vector3 = new  Vector3(
+        Vector3 local_vector3 = new Vector3(
                 (float) (0.5 * VIDEO_HEIGHT_METERS * (videoWidth / videoHeight)),
-                (float) (0.5 *VIDEO_HEIGHT_METERS), 0.5f);
+                (float) (0.5 * VIDEO_HEIGHT_METERS), 0.5f);
         videoNode.setLocalScale(local_vector3);
 
         Quaternion quaternion = new Quaternion(local_vector3, 0);
