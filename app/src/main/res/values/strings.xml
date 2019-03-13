@@ -18,6 +18,8 @@
     <string name="txt_artist">Auteur</string>
     <string name="txt_date">Date</string>
     <string name="txt_format">Matériel</string>
+    <string name="action">Action</string>
+    <string name="your_action">Replace with your own action</string>
 
 
 </resources>

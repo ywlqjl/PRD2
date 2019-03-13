@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -41,8 +40,6 @@ public class AugmentedImageActivity extends AppCompatActivity {
     private final Map<AugmentedImage, AugmentedImageNode> augmentedImageMap = new HashMap<>();
     private ImageView fitToScanView;
     private LinearLayout introduction_layout;
-    private GridLayout introduction_layout2;
-    private TextView txtInfo;
     private TextView txtTitle;
     private TextView txtArtist;
     private TextView txtDate;
@@ -71,7 +68,6 @@ public class AugmentedImageActivity extends AppCompatActivity {
         introduction_layout = findViewById(R.id.image_intro_layout2);
         introduction_layout.setVisibility(View.GONE);
 
-//        txtInfo = findViewById(R.id.txt_info_image);
         txtTitle = findViewById(R.id.txt_title_image);
         txtArtist = findViewById(R.id.txt_artist_image);
         txtDate = findViewById(R.id.txt_date_image);
@@ -82,12 +78,9 @@ public class AugmentedImageActivity extends AppCompatActivity {
         LoadInuitInfo loadInuitInfo = new LoadInuitInfo();
         listInfoPages = loadInuitInfo.createListInuitInfo();
 
-        btnMoreInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AugmentedImageActivity.this, MoreInfoActivity.class);
-                startActivity(intent);
-            }
+        btnMoreInfo.setOnClickListener(v -> {
+            Intent intent = new Intent(AugmentedImageActivity.this, MoreInfoActivity.class);
+            startActivity(intent);
         });
 
     }
@@ -124,7 +117,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
                     // Create a new anchor for newly found images.
                     if (!augmentedImageMap.containsKey(augmentedImage)) {
 
-                        augmentedImageMap.clear();
+                        //augmentedImageMap.clear();
 
                         AugmentedImageNode node = new AugmentedImageNode(this);
                         node.setImage(augmentedImage);
@@ -211,8 +204,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
             mediaPlayer.start();
 
             // Wait to set the renderable until the first frame of the  video becomes available.
-            // This prevents the renderable from briefly appearing as a black quad before the video
-            // plays.
+            // This prevents the renderable from briefly appearing as a black quad before the video plays.
             texture
                     .getSurfaceTexture()
                     .setOnFrameAvailableListener(
