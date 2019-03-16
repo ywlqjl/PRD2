@@ -20,6 +20,8 @@
     <string name="txt_format">Matériel</string>
     <string name="action">Action</string>
     <string name="your_action">Replace with your own action</string>
+    <string name="toast_sceneform_opengl_version">Sceneform requires OpenGL ES 3.0 or later</string>
+    <string name="toast_build_version">Sceneform requires Android N or later</string>
 
 
 </resources>

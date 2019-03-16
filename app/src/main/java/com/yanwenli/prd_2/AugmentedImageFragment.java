@@ -47,13 +47,13 @@ public class AugmentedImageFragment extends ArFragment {
         // Sceneform eventually.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             Log.e(TAG, "Sceneform requires Android N or later");
-            Toast.makeText(context, "Sceneform requires Android N or later", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.toast_build_version, Toast.LENGTH_SHORT).show();
         }
         String openGlVersionString = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getDeviceConfigurationInfo().getGlEsVersion();
 
         if (Double.parseDouble(openGlVersionString) < MIN_OPENGL_VERSION) {
             Log.e(TAG, "Sceneform requires OpenGL ES 3.0 or later");
-            Toast.makeText(context, "Sceneform requires OpenGL ES 3.0 or later", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.toast_sceneform_opengl_version, Toast.LENGTH_SHORT).show();
 
         }
     }

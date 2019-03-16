@@ -150,6 +150,11 @@ public class AugmentedImageActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Play transport introduction video when user click the button "Play".
+     * @param context
+     * @param anchorParent
+     */
     public void playVideo(Context context, Anchor anchorParent) {
         // Create an ExternalTexture for displaying the contents of the video.
         ExternalTexture texture = new ExternalTexture();
