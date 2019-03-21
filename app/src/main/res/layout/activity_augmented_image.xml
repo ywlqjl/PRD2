@@ -9,12 +9,14 @@
     <fragment
         android:id="@+id/ux_fragment"
         android:name="com.yanwenli.prd_2.AugmentedImageFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/image_intro_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread_inside"
-        app:layout_constraintVertical_weight="8" />
+        app:layout_constraintLeft_toRightOf="@id/image_intro_layout"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintHorizontal_weight="3" />
 
     <ImageView
         android:id="@+id/image_view_fit_to_scan"
@@ -27,38 +29,97 @@
 
     <LinearLayout
         android:id="@+id/image_intro_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="10dp"
-        app:layout_constraintBottom_toBottomOf="@id/btn_more_info"
-        app:layout_constraintTop_toBottomOf="@+id/ux_fragment"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/ux_fragment"
         app:layout_constraintVertical_chainStyle="spread"
-        app:layout_constraintVertical_weight="2">
+        app:layout_constraintHorizontal_weight="1" >
+        <!--<TextView-->
+            <!--android:id="@+id/txt_info_image"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="4"-->
+            <!--android:textColor="@color/black_overlay"-->
+            <!--android:textSize="16sp"-->
+            <!--android:textStyle="bold" />-->
         <TextView
-            android:id="@+id/txt_info_image"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:textColor="@color/black_overlay"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="@string/txt_title"
             android:textSize="16sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/txt_title_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="@string/txt_artist"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_artist_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="@string/txt_date"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_date_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="@string/txt_format"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_medium_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/btn_more_info"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            app:layout_constraintTop_toBottomOf="@id/image_intro_layout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_chainStyle="spread"
+            android:text="@string/more_information"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@color/colorPrimaryDark"
+            app:layout_constraintVertical_weight="1"/>
+
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_more_info"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/image_intro_layout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_chainStyle="spread"
-        android:text="@string/more_information"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:background="@color/colorPrimaryDark"
-        app:layout_constraintVertical_weight="1"/>
+
 
 </android.support.constraint.ConstraintLayout>
