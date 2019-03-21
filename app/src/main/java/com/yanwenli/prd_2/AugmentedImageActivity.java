@@ -47,6 +47,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
     private TextView txtMedium;
     private Button btnMoreInfo;
     private ArrayList<Inuit> listInfoPages = new ArrayList<>();
+    private Boolean onPlay;
 
     @Nullable
     private ModelRenderable videoRenderable;
@@ -65,13 +66,29 @@ public class AugmentedImageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        int orientation = getResources().getConfiguration().orientation;
+//        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            setContentView(R.layout.activity_augmented_image);
+//        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            setContentView(R.layout.activity_augmented_image2);
+//        }
+
         setContentView(R.layout.activity_augmented_image2);
 
+        findViews();
+        loadInfo();
+        addListeners();
+
+
+
+    }
+
+    public void findViews(){
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdateFrame);
-        fitToScanView = findViewById(R.id.image_view_fit_to_scan2);
+        fitToScanView = findViewById(R.id.image_view_fit_to_scan);
         fitToScanView.setVisibility(View.VISIBLE);
-        introduction_layout = findViewById(R.id.image_intro_layout2);
+        introduction_layout = findViewById(R.id.image_intro_layout);
         introduction_layout.setVisibility(View.GONE);
 
         txtTitle = findViewById(R.id.txt_title_image);
@@ -80,15 +97,19 @@ public class AugmentedImageActivity extends AppCompatActivity {
         txtMedium = findViewById(R.id.txt_medium_image);
 
         btnMoreInfo = findViewById(R.id.btn_more_info);
+    }
+
+    public void loadInfo(){
 
         LoadInuitInfo loadInuitInfo = new LoadInuitInfo();
         listInfoPages = loadInuitInfo.createListInuitInfo();
+    }
 
+    public void addListeners(){
         btnMoreInfo.setOnClickListener(v -> {
             Intent intent = new Intent(AugmentedImageActivity.this, MoreInfoActivity.class);
             startActivity(intent);
         });
-
     }
 
     /**
@@ -114,16 +135,17 @@ public class AugmentedImageActivity extends AppCompatActivity {
      * Play transport introduction video when user click the button "Play".
      *
      * @param context      Context of the video
-     * @param anchorParent Node of the video
+     * @param image Node of the video
      */
-    public void playVideo(Context context, Anchor anchorParent) {
+//    public void playVideo(Context context, Anchor anchorParent) {
+    public void playVideo(Context context, AugmentedImage image) {
         // Create an ExternalTexture for displaying the contents of the video.
         ExternalTexture texture = new ExternalTexture();
 
         // Create an Android MediaPlayer to capture the video on the external texture's surface.
-        mediaPlayer = MediaPlayer.create(context, R.raw.lion_chroma);
+        mediaPlayer = MediaPlayer.create(context, R.raw.video2);
         mediaPlayer.setSurface(texture.getSurface());
-        mediaPlayer.setLooping(true);
+        mediaPlayer.setLooping(false);
 
         // Create a renderable with a material that has a parameter of type 'samplerExternal' so that
         // it can display an ExternalTexture. The material also has an implementation of a chroma key
@@ -148,6 +170,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
 
 //        Anchor anchor = anchorParent.createAnchor();
+        Anchor anchorParent = image.createAnchor(image.getCenterPose());
         AnchorNode anchorNode = new AnchorNode(anchorParent);
         anchorNode.setParent(arFragment.getArSceneView().getScene());
 
@@ -157,16 +180,31 @@ public class AugmentedImageActivity extends AppCompatActivity {
         // Set the scale of the node so that the aspect ratio of the video is correct.
         float videoWidth = mediaPlayer.getVideoWidth();
         float videoHeight = mediaPlayer.getVideoHeight();
+
+
+        Vector3 local_position = new Vector3(0.0f * image.getExtentX(), 0.0f, 0.6f * image.getExtentZ()); //0.5 * videoHeight * VIDEO_HEIGHT_METERS
+        videoNode.setLocalPosition(local_position);
+
         Vector3 local_vector3 = new Vector3(
-                (float) (0.5 * VIDEO_HEIGHT_METERS * (videoWidth / videoHeight)),
-                (float) (0.5 * VIDEO_HEIGHT_METERS), 0.5f);
+                (float) (0.22 * VIDEO_HEIGHT_METERS * (videoWidth / videoHeight)),
+                (float) (0.22 * VIDEO_HEIGHT_METERS),
+                0.22f);
         videoNode.setLocalScale(local_vector3);
+
 
         Quaternion quaternion = new Quaternion(local_vector3, 0);
         videoNode.setWorldRotation(quaternion);
 
+        videoNode.setOnTapListener((hitTestResult, motionEvent) -> {
+            mediaPlayer.release();
+            onPlay = true;
+            Toast.makeText(AugmentedImageActivity.this, "Ok: Information page", Toast.LENGTH_SHORT).show();
+
+        });
+
         // Start playing the video when the first node is placed.
         if (!mediaPlayer.isPlaying()) {
+
             mediaPlayer.start();
 
             // Wait to set the renderable until the first frame of the  video becomes available.
@@ -225,13 +263,16 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
                             augmentedImageMap.get(augmentedImage).setOnTapListener((hitTestResult, motionEvent) -> {
 
-                                playVideo(this, augmentedImageMap.get(augmentedImage).getAnchor());
+//                                playVideo(this, augmentedImageMap.get(augmentedImage).getAnchor());
+                                playVideo(this, augmentedImage);
+                                onPlay = true;
                                 Toast.makeText(AugmentedImageActivity.this, "Ok: Information page", Toast.LENGTH_SHORT).show();
 
                             });
                         }
 
                     }
+
                     break;
 
                 case STOPPED:
@@ -240,19 +281,4 @@ public class AugmentedImageActivity extends AppCompatActivity {
             }
         }
     }
-
-    /**
-     * Horizontal and vertical screen switching for this activity
-     * @param newConfig
-     */
-    public void onConfigurationChanged(Configuration newConfig) {
-        // TODO Auto-generated method stub
-        super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
-        }
-    }
-
 }
