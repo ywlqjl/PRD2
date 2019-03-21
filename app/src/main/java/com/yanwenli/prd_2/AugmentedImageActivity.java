@@ -2,6 +2,7 @@ package com.yanwenli.prd_2;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -56,6 +57,11 @@ public class AugmentedImageActivity extends AppCompatActivity {
     // Controls the height of the video in world space.
     private static final float VIDEO_HEIGHT_METERS = 0.85f;
 
+    /**
+     * onCreate Method, initiation
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +91,12 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
     }
 
-    private void onUpdateFrame(FrameTime frameTime) {
+    /**
+     * Image recognition process and node binding according to need
+     *
+     * @param frameTime frametime got by system
+     */
+    public void onUpdateFrame(FrameTime frameTime) {
         Frame frame = arFragment.getArSceneView().getArFrame();
 
         // If there is no frame or ARCore is not tracking yet, just return.
@@ -95,65 +106,15 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
         Collection<AugmentedImage> updatedAugmentedImages = frame.getUpdatedTrackables(AugmentedImage.class);
 
-        for (AugmentedImage augmentedImage : updatedAugmentedImages) {
-            switch (augmentedImage.getTrackingState()) {
-                case PAUSED:
-                    // When an image is in PAUSED state, but the camera is not PAUSED, it has been detected,
-                    // but not yet tracked.
-                    int index_of_current_image = augmentedImage.getIndex();
-                    String text = "Detected Image" + index_of_current_image;
-//                    txtInfo.setText(listInfoPages.get(index_of_current_image).getInfo());
-                    txtTitle.setText(listInfoPages.get(index_of_current_image).getTitle());
-                    txtArtist.setText(listInfoPages.get(index_of_current_image).getArtist());
-                    txtDate.setText(listInfoPages.get(index_of_current_image).getDate());
-                    txtMedium.setText(listInfoPages.get(index_of_current_image).getMedium());
+        gestionState(updatedAugmentedImages);
 
-                    Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-
-                    break;
-
-                case TRACKING:
-
-                    // Create a new anchor for newly found images.
-                    if (!augmentedImageMap.containsKey(augmentedImage)) {
-
-                        //augmentedImageMap.clear();
-
-                        AugmentedImageNode node = new AugmentedImageNode(this);
-                        node.setImage(augmentedImage);
-                        augmentedImageMap.put(augmentedImage, node);
-                        arFragment.getArSceneView().getScene().addChild(node);
-                        fitToScanView.setVisibility(View.GONE);
-                        introduction_layout.setVisibility(View.VISIBLE);
-
-                        if (!augmentedImageMap.isEmpty()) {
-
-                            augmentedImageMap.get(augmentedImage).setOnTapListener((hitTestResult, motionEvent) -> {
-//                                Intent intent = new Intent(AugmentedImageActivity.this, InfoActivity.class);
-//                                intent.putExtra("imageIndex", augmentedImage.getIndex());
-//                                startActivity(intent);
-
-                                playVideo(this, augmentedImageMap.get(augmentedImage).getAnchor());
-//                                playVideo(this,augmentedImageMap.get(augmentedImage).getAnchorParent());
-                                Toast.makeText(AugmentedImageActivity.this, "Ok: Information page", Toast.LENGTH_SHORT).show();
-
-                            });
-                        }
-
-                    }
-                    break;
-
-                case STOPPED:
-                    augmentedImageMap.remove(augmentedImage);
-                    break;
-            }
-        }
     }
 
     /**
      * Play transport introduction video when user click the button "Play".
-     * @param context
-     * @param anchorParent
+     *
+     * @param context      Context of the video
+     * @param anchorParent Node of the video
      */
     public void playVideo(Context context, Anchor anchorParent) {
         // Create an ExternalTexture for displaying the contents of the video.
@@ -221,4 +182,77 @@ public class AugmentedImageActivity extends AppCompatActivity {
             videoNode.setRenderable(videoRenderable);
         }
     }
+
+    /**
+     * Gestion of the camera frame state
+     *
+     * @param updatedAugmentedImages a collection of AugmentedImage
+     */
+    public void gestionState(Collection<AugmentedImage> updatedAugmentedImages) {
+
+        for (AugmentedImage augmentedImage : updatedAugmentedImages) {
+            switch (augmentedImage.getTrackingState()) {
+                case PAUSED:
+                    // When an image is in PAUSED state, but the camera is not PAUSED, it has been detected,
+                    // but not yet tracked.
+                    int index_of_current_image = augmentedImage.getIndex();
+                    String text = "Detected Image" + index_of_current_image;
+//                    txtInfo.setText(listInfoPages.get(index_of_current_image).getInfo());
+                    txtTitle.setText(listInfoPages.get(index_of_current_image).getTitle());
+                    txtArtist.setText(listInfoPages.get(index_of_current_image).getArtist());
+                    txtDate.setText(listInfoPages.get(index_of_current_image).getDate());
+                    txtMedium.setText(listInfoPages.get(index_of_current_image).getMedium());
+
+                    Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+
+                    break;
+
+                case TRACKING:
+
+                    // Create a new anchor for newly found images.
+                    if (!augmentedImageMap.containsKey(augmentedImage)) {
+
+                        //augmentedImageMap.clear();
+
+                        AugmentedImageNode node = new AugmentedImageNode(this);
+                        node.setImage(augmentedImage);
+                        augmentedImageMap.put(augmentedImage, node);
+                        arFragment.getArSceneView().getScene().addChild(node);
+                        fitToScanView.setVisibility(View.GONE);
+                        introduction_layout.setVisibility(View.VISIBLE);
+
+                        if (!augmentedImageMap.isEmpty()) {
+
+                            augmentedImageMap.get(augmentedImage).setOnTapListener((hitTestResult, motionEvent) -> {
+
+                                playVideo(this, augmentedImageMap.get(augmentedImage).getAnchor());
+                                Toast.makeText(AugmentedImageActivity.this, "Ok: Information page", Toast.LENGTH_SHORT).show();
+
+                            });
+                        }
+
+                    }
+                    break;
+
+                case STOPPED:
+                    augmentedImageMap.remove(augmentedImage);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Horizontal and vertical screen switching for this activity
+     * @param newConfig
+     */
+    public void onConfigurationChanged(Configuration newConfig) {
+        // TODO Auto-generated method stub
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
