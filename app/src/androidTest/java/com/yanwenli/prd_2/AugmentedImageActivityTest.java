@@ -2,11 +2,9 @@ package com.yanwenli.prd_2;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.google.ar.core.Frame;
 import com.google.ar.sceneform.ux.ArFragment;
 
 import org.junit.Before;
@@ -18,29 +16,30 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 /**
  * Instrumented test, which will execute on an Android device
- *
  */
 @RunWith(AndroidJUnit4.class)
 public class AugmentedImageActivityTest {
 
     private Context appContext;
+    private Context arContext;
+
     private ArFragment arFragment;
 
     @Rule
     public ActivityTestRule<AugmentedImageActivity> mActivityRule = new ActivityTestRule<>(AugmentedImageActivity.class);
 
     @Before
-    public void setup(){
+    public void setup() {
         appContext = InstrumentationRegistry.getTargetContext();
-//        mActivityRule.getActivity().getSupportFragmentManager().beginTransaction();
+        arContext = InstrumentationRegistry.getContext();
         arFragment = new ArFragment();
+
     }
 
     /**
@@ -71,18 +70,10 @@ public class AugmentedImageActivityTest {
      * Test of creating the arScene
      */
     @Test
-    public void getArSceneTest(){
+    public void getArSceneTest() {
         mActivityRule.getActivity().getSupportFragmentManager().beginTransaction()
                 .add(R.id.ux_fragment, arFragment).commit();
-
-//        arFragment.getArSceneView().getScene();
-
-    }
-
-    @Test
-    public void getStateTest(){
-//        Frame frame_not_null = arFragment.getArSceneView().getArFrame();
-
+//        arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdateFrame);
 
     }
 
