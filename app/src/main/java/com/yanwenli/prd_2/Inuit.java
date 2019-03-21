@@ -8,6 +8,14 @@ public class Inuit {
     private String artist;
     private String medium;
 
+    /**
+     * Constructor
+     * @param id id of the work
+     * @param title title of the work
+     * @param artist artist of the work
+     * @param date create date of the work
+     * @param medium materiel of the work
+     */
     public Inuit(int id, String title, String artist, String date, String medium) {
         this.id = id;
         this.title = title;
@@ -16,10 +24,19 @@ public class Inuit {
         this.medium = medium;
     }
 
+    /**
+     * Constructor
+     * @param id id of the work
+     * @param info information of the work
+     */
     public Inuit(int id, String info) {
         this.id = id;
         this.info = info;
     }
+
+    /**
+     * Getters and setters
+     */
 
     public int getId() {
         return id;

@@ -121,6 +121,7 @@ public class AugmentedImageFragment extends ArFragment {
             //     augmentedImageDatabase.addImage("image_name", augmentedImageBitmap, widthInMeters);
             // This will improve the initial detection speed. ARCore will still actively estimate the
             // physical size of the image as it is viewed from multiple viewpoints.
+
         } else {
             // This is an alternative way to initialize an AugmentedImageDatabase instance,
             // load a pre-existing augmented image database.

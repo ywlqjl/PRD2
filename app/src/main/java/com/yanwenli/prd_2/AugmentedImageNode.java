@@ -19,8 +19,10 @@ import java.util.concurrent.CompletableFuture;
 
 public class AugmentedImageNode extends AnchorNode implements Node.OnTapListener, Node.OnTouchListener {
 
-    private static final String TAG = "AugmentedImageNode"; //节点标签
-    private AugmentedImage image; //增强的图像
+    private static final String TAG = "AugmentedImageNode"; //Node label
+    private AugmentedImage image; //image to augment
+
+    //Three interest points
     private static CompletableFuture<ViewRenderable> point;
     private static CompletableFuture<ViewRenderable> point_left;
     private static CompletableFuture<ViewRenderable> point_right;

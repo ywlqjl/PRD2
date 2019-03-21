@@ -10,6 +10,10 @@ public class VideoPlay extends AppCompatActivity {
 
     private VideoView videoView;
 
+    /**
+     * onCreate Method of VideoPlay activity, blind the view and get the video resource
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
