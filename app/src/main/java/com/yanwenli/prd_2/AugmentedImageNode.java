@@ -87,39 +87,40 @@ public class AugmentedImageNode extends AnchorNode implements Node.OnTapListener
         Vector3 localPosition = new Vector3();
         Vector3 localPosition2 = new Vector3();
         Vector3 localPosition3 = new Vector3();
+        Vector3 rotation = new Vector3();
 
         // Centre position: localPosition.set(-0.0f, 0.0f, 0.0f );
         localPosition.set(-0.0f * image.getExtentX(), -0.0f, 0.0f * image.getExtentZ());
-        localPosition2.set(-0.5f * image.getExtentX(), -0.0f, 0.7f * image.getExtentZ());
-        localPosition3.set(0.5f * image.getExtentX(), -0.0f, -0.2f * image.getExtentZ());
+        localPosition2.set(-0.7f * image.getExtentX(), -0.0f, 0.5f * image.getExtentZ());
+        localPosition3.set(0.5f * image.getExtentX(), -0.0f, -0.5f * image.getExtentZ());
+        rotation.set(1.0f , 0.0f, 0.0f);
 
         // Create world position with quaternion for changing local position to world position
-        Quaternion quaternion = new Quaternion(0.0f, 0.0f * image.getExtentX(), 0.0f, 0.0f * image.getExtentZ());
+        Quaternion quaternion_world = new Quaternion(0.0f, 0.0f * image.getExtentX(), 0.0f, 0.0f * image.getExtentZ());
+        Quaternion quaternion_local = new Quaternion(rotation,-90);
 
         // Create the nodes and set their positions.
         cornerNode = new Node();
         cornerNode.setParent(this);
         cornerNode.setLocalPosition(localPosition);
-//        cornerNode.setLocalRotation(quaternion);
-        cornerNode.setWorldRotation(quaternion);
+        cornerNode.setLocalRotation(quaternion_local);
         cornerNode.setRenderable(point.getNow(null));
 
         cornerNode_left = new Node();
         cornerNode_left.setParent(this);
         cornerNode_left.setLocalPosition(localPosition2);
-        cornerNode_left.setWorldRotation(quaternion);
+        cornerNode_left.setLocalRotation(quaternion_local);
         cornerNode_left.setRenderable(point_left.getNow(null));
 
         cornerNode_right = new Node();
         cornerNode_right.setParent(this);
         cornerNode_right.setLocalPosition(localPosition3);
-        cornerNode_right.setWorldRotation(quaternion);
+        cornerNode_right.setLocalRotation(quaternion_local);
         cornerNode_right.setRenderable(point_right.getNow(null));
 
     }
 
 
-    //2018.
     @Override
     public void onTap(HitTestResult hitTestResult, MotionEvent motionEvent) {
         if (cornerNode == null) {
@@ -138,21 +139,4 @@ public class AugmentedImageNode extends AnchorNode implements Node.OnTapListener
         cornerNode.setEnabled(cornerNode.isEnabled());
         return true;
     }
-/*
-    //这三个方法无需自己定义，无需重写，可直接使用父类中的方法
-
-    public Context getNodeContext() {
-        return this.nodeContext;
-    }
-
-
-    public Anchor getAnchorParent() {
-        return anchorParent;
-    }
-
-    public void setAnchorParent(Anchor anchorParent) {
-        this.anchorParent = anchorParent;
-    }
-
-    */
 }
