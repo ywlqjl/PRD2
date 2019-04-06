@@ -60,9 +60,9 @@ public class AugmentedImageActivityTest {
     public void prepareTest() {
 
         onView(withId(R.id.ux_fragment)).check(matches(isDisplayed()));
-        onView(withId(R.id.image_view_fit_to_scan2)).check(matches(isDisplayed()));
+        onView(withId(R.id.image_view_fit_to_scan)).check(matches(isDisplayed()));
         onView(withId(R.id.btn_more_info)).check(matches(is(isDisplayed())));
-        onView(withId(R.id.image_intro_layout2)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.image_intro_layout)).check(matches(not(isDisplayed())));
 
     }
 
