@@ -22,7 +22,7 @@ public class VideoPlay extends AppCompatActivity {
         videoView = findViewById(R.id.video_view);
 //        String path = Environment.getExternalStorageDirectory().getAbsolutePath()+" Path name ";
 //        videoView.setVideoPath();
-        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/raw/video2"));
+        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/raw/video_transparent"));
 
 
         MediaController mediaController = new MediaController(this);
