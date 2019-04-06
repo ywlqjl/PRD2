@@ -2,7 +2,6 @@ package com.yanwenli.prd_2;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -47,7 +46,8 @@ public class AugmentedImageActivity extends AppCompatActivity {
     private TextView txtMedium;
     private Button btnMoreInfo;
     private ArrayList<Inuit> listInfoPages = new ArrayList<>();
-    private Boolean onPlay;
+
+    private Boolean isFinished = true;
 
     @Nullable
     private ModelRenderable videoRenderable;
@@ -78,12 +78,9 @@ public class AugmentedImageActivity extends AppCompatActivity {
         findViews();
         loadInfo();
         addListeners();
-
-
-
     }
 
-    public void findViews(){
+    public void findViews() {
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdateFrame);
         fitToScanView = findViewById(R.id.image_view_fit_to_scan);
@@ -99,13 +96,13 @@ public class AugmentedImageActivity extends AppCompatActivity {
         btnMoreInfo = findViewById(R.id.btn_more_info);
     }
 
-    public void loadInfo(){
+    public void loadInfo() {
 
         LoadInuitInfo loadInuitInfo = new LoadInuitInfo();
         listInfoPages = loadInuitInfo.createListInuitInfo();
     }
 
-    public void addListeners(){
+    public void addListeners() {
         btnMoreInfo.setOnClickListener(v -> {
             Intent intent = new Intent(AugmentedImageActivity.this, MoreInfoActivity.class);
             startActivity(intent);
@@ -134,8 +131,8 @@ public class AugmentedImageActivity extends AppCompatActivity {
     /**
      * Play transport introduction video when user click the button "Play".
      *
-     * @param context      Context of the video
-     * @param image Node of the video
+     * @param context Context of the video
+     * @param image   Node of the video
      */
 //    public void playVideo(Context context, Anchor anchorParent) {
     public void playVideo(Context context, AugmentedImage image) {
@@ -143,9 +140,10 @@ public class AugmentedImageActivity extends AppCompatActivity {
         ExternalTexture texture = new ExternalTexture();
 
         // Create an Android MediaPlayer to capture the video on the external texture's surface.
-        mediaPlayer = MediaPlayer.create(context, R.raw.video2);
+        mediaPlayer = MediaPlayer.create(context, R.raw.video_transparent);
         mediaPlayer.setSurface(texture.getSurface());
         mediaPlayer.setLooping(false);
+
 
         // Create a renderable with a material that has a parameter of type 'samplerExternal' so that
         // it can display an ExternalTexture. The material also has an implementation of a chroma key
@@ -181,32 +179,39 @@ public class AugmentedImageActivity extends AppCompatActivity {
         float videoWidth = mediaPlayer.getVideoWidth();
         float videoHeight = mediaPlayer.getVideoHeight();
 
-
-        Vector3 local_position = new Vector3(0.0f * image.getExtentX(), 0.0f, 0.6f * image.getExtentZ()); //0.5 * videoHeight * VIDEO_HEIGHT_METERS
+        //Local position
+        Vector3 local_position = new Vector3(0.0f * image.getExtentX(), 0.0f, 0.75f * image.getExtentZ()); //0.5 * videoHeight * VIDEO_HEIGHT_METERS
         videoNode.setLocalPosition(local_position);
 
+        //Local scale
         Vector3 local_vector3 = new Vector3(
-                (float) (0.22 * VIDEO_HEIGHT_METERS * (videoWidth / videoHeight)),
-                (float) (0.22 * VIDEO_HEIGHT_METERS),
-                0.22f);
+                (float) (0.219 * VIDEO_HEIGHT_METERS * (videoWidth / videoHeight)),
+                (float) (0.219 * VIDEO_HEIGHT_METERS),
+                0.219f);
         videoNode.setLocalScale(local_vector3);
 
+        //Local rotation
+        Vector3 rotation = new Vector3(1.0f, 0.0f, 0.0f);
+        Quaternion quaternion = new Quaternion(rotation, -90);
+        videoNode.setLocalRotation(quaternion);
 
-        Quaternion quaternion = new Quaternion(local_vector3, 0);
-        videoNode.setWorldRotation(quaternion);
+//        videoNode.setOnTapListener((hitTestResult, motionEvent) -> {
+//            mediaPlayer.release();
+//        });
 
-        videoNode.setOnTapListener((hitTestResult, motionEvent) -> {
+        mediaPlayer.setOnCompletionListener(mp -> {
             mediaPlayer.release();
-            onPlay = true;
-            Toast.makeText(AugmentedImageActivity.this, "Ok: Information page", Toast.LENGTH_SHORT).show();
-
+            anchorNode.removeChild(videoNode);
+            isFinished = true;
         });
+
 
         // Start playing the video when the first node is placed.
         if (!mediaPlayer.isPlaying()) {
 
             mediaPlayer.start();
 
+            isFinished = false;
             // Wait to set the renderable until the first frame of the  video becomes available.
             // This prevents the renderable from briefly appearing as a black quad before the video plays.
             texture
@@ -216,6 +221,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
                                 videoNode.setRenderable(videoRenderable);
                                 texture.getSurfaceTexture().setOnFrameAvailableListener(null);
                             });
+
         } else {
             videoNode.setRenderable(videoRenderable);
         }
@@ -264,9 +270,15 @@ public class AugmentedImageActivity extends AppCompatActivity {
                             augmentedImageMap.get(augmentedImage).setOnTapListener((hitTestResult, motionEvent) -> {
 
 //                                playVideo(this, augmentedImageMap.get(augmentedImage).getAnchor());
-                                playVideo(this, augmentedImage);
-                                onPlay = true;
-                                Toast.makeText(AugmentedImageActivity.this, "Ok: Information page", Toast.LENGTH_SHORT).show();
+
+                                if(isFinished == true){
+                                    playVideo(this, augmentedImage);
+                                    Toast.makeText(AugmentedImageActivity.this, "Ok: play", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    Toast.makeText(AugmentedImageActivity.this, "Sorry: a video is playing now, you can't open another!", Toast.LENGTH_SHORT).show();
+
+                                }
 
                             });
                         }
